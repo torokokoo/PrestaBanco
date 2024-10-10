@@ -17,7 +17,7 @@ public class Loan {
     @Column(name = "loan_id", unique = true, nullable = false)
     private Long loanId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "loan_type_id")
     private LoanType loanType;
 
@@ -43,7 +43,7 @@ public class Loan {
     @Column(name = "updated_at")
     @Getter @Setter private Date updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "status_id")
     @Getter @Setter private Status status;
 }

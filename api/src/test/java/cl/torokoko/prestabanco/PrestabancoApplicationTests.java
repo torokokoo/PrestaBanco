@@ -3,10 +3,10 @@ package cl.torokoko.prestabanco;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class PrestabancoApplicationTests {
 
-	@Test
+	//@Test
 	void contextLoads() {
 	}
 

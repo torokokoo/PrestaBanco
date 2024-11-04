@@ -15,11 +15,11 @@ public class LoanTypeRequierement {
     @Column(name = "loan_type_requierement_id", unique = true, nullable = false)
     private Long loanTypeRequierementId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "document_id")
     private Document document;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "loan_type_id")
     private LoanType loanType;
 

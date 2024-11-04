@@ -18,6 +18,9 @@ public class LoanController {
     @GetMapping("/")
     public List<Loan> getAll() { return loanService.getAll(); }
 
+    @GetMapping("/{id}")
+    public Loan getById(@PathVariable long id) { return loanService.getById(id); }
+
     @PostMapping("/")
     public Loan add(@RequestBody Loan loan) {return loanService.newLoan(loan);}
 

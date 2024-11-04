@@ -30,4 +30,8 @@ public class LoanService {
         found.setStatus(status);
         return loanRepository.save(found);
     }
+
+    public Loan getById(long id) {
+        return loanRepository.findByLoanId(id);
+    }
 }

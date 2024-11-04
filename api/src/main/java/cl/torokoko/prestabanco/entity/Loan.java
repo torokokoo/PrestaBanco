@@ -35,7 +35,7 @@ public class Loan {
     @Getter @Setter private int requestedRate;
 
     @Column(name = "requested_funding")
-    @Getter @Setter private int requestedFunding;
+    @Getter @Setter private float requestedFunding;
 
     @Column(name = "created_at")
     @Getter @Setter private Date createdAt;

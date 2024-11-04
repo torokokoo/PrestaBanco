@@ -1,0 +1,140 @@
+version: '3.8'
+services:
+  #nginx
+  nginx-backend:
+    image: nginx
+    container_name: prestabanco-backend-container
+    restart: always
+    ports:
+      - 8090:8090
+    volumes:
+      - ./backend.conf:/etc/nginx/nginx.conf
+    networks:
+      - prestabanco-backend-network
+    depends_on:
+      - prestabanco-backend-1
+      - prestabanco-backend-2
+      - prestabanco-backend-3
+  nginx-frontend:
+    image: nginx
+    container_name: prestabanco-frontend-container
+    restart: always
+    ports:
+      - 8070:8070
+    volumes:
+      - ./frontend.conf:/etc/nginx/nginx.conf
+    networks:
+      - prestabanco-frontend-network
+    depends_on:
+      - prestabanco-frontend-1
+      - prestabanco-frontend-2
+      - prestabanco-frontend-3
+  postgres:
+    image: postgres
+    container_name: prestabanco-postgres-container
+    deploy:
+      restart_policy:
+        condition: on-failure
+    volumes:
+      - prestabanco-postgres-volume:/var/lib/postgresql/data
+    networks:
+      - prestabanco-backend-network
+    environment:
+      POSTGRES_PASSWORD: root
+    ports:
+      - 5435:5432
+  prestabanco-backend-1:
+    image: torokoko/prestabanco-backend
+    container_name: prestabanco-backend-container-1
+    ports:
+      - 8091:8090
+    environment:
+      DB_HOST: prestabanco-postgres-container
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: root
+    networks:
+      - prestabanco-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - postgres
+
+  prestabanco-backend-2:
+    image: torokoko/prestabanco-backend
+    container_name: prestabanco-backend-container-2
+    ports:
+      - 8092:8090
+    environment:
+      DB_HOST: prestabanco-postgres-container
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: root
+    networks:
+      - prestabanco-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - postgres
+
+  prestabanco-backend-3:
+    image: torokoko/prestabanco-backend
+    container_name: prestabanco-backend-container-3
+    ports:
+      - 8093:8090
+    environment:
+      DB_HOST: prestabanco-postgres-container
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: root
+    networks:
+      - prestabanco-backend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+    depends_on:
+      - postgres
+
+  prestabanco-frontend-1:
+    container_name: prestabanco-frontend-container-1
+    image: torokoko/prestabanco-frontend
+    ports:
+      - 3001:3000
+    networks:
+      - prestabanco-frontend-network
+    environment:
+      VITE_BACKEND_URL: prestabanco-backend
+      VITE_BACKEND_PORT: 8090
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  prestabanco-frontend-2:
+    container_name: prestabanco-frontend-container-2
+    image: torokoko/prestabanco-frontend
+    ports:
+      - 3002:3000
+    networks:
+      - prestabanco-frontend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+
+  prestabanco-frontend-3:
+    container_name: prestabanco-frontend-container-3
+    image: torokoko/prestabanco-frontend
+    ports:
+      - 3003:3000
+    networks:
+      - prestabanco-frontend-network
+    deploy:
+      restart_policy:
+        condition: on-failure
+  
+volumes:
+  prestabanco-postgres-volume:
+networks:
+  prestabanco-frontend-network:
+  prestabanco-backend-network:

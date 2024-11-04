@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-const BACKEND_URL = import.meta.env.BACKEND_URL || 'localhost';
-const BACKEND_PORT = import.meta.env.BACKEND_PORT || '8080';
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL 
+const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT 
 
 console.log(`Conectado al backend en ${BACKEND_URL}:${BACKEND_PORT}`)
 

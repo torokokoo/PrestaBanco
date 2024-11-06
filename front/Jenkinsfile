@@ -5,8 +5,8 @@ pipeline{
             steps{
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/torokokoo/prestabanco']])
                 dir("front"){
-                    bat "npm install"
-                    bat "npm run build"
+                    sh "npm install"
+                    sh "npm run build"
                 }
             }
         }
@@ -15,8 +15,8 @@ pipeline{
                 dir("front"){
                     script{
                          withDockerRegistry(credentialsId: 'docker-credentials'){
-                            bat "docker build -t torokoko/prestabanco-frontend ."
-                            bat "docker push torokoko/prestabanco-frontend"
+                            sh "docker build -t torokoko/prestabanco-frontend ."
+                            sh "docker push torokoko/prestabanco-frontend"
                         }
                     }                    
                 }

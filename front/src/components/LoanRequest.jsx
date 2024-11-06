@@ -158,7 +158,7 @@ export default function LoanRequest() {
               />
             </FormControl>
 
-            <Divider>PRESTAMO</Divider>
+            <Divider>DATOS DEL PRESTAMO</Divider>
             <FormControl fullWidth>
               <TextField
                 id="loanType"

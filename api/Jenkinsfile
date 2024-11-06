@@ -25,8 +25,8 @@ pipeline{
                 dir("api"){
                     script{
                          withDockerRegistry(credentialsId: 'docker-credentials'){
-                            sh "docker build -t torokoko/prestabanco-backend ."
-                            sh "docker push torokoko/prestabanco-backend"
+                            sh "docker buildx build --platform linux/amd64 -t torokoko/prestabanco-backend:prod ."
+                            sh "docker push torokoko/prestabanco-backend:prod"
                         }
                     }                    
                 }

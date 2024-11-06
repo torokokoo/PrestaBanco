@@ -15,9 +15,8 @@ pipeline{
                 dir("front"){
                     script{
                          withDockerRegistry(credentialsId: 'docker-credentials'){
-                            sh "docker buildx create --use"
-                            sh "docker buildx build --platform linux/amd64 -t torokoko/prestabanco-frontend:prod ."
-                            sh "docker push torokoko/prestabanco-frontend:prod"
+                            sh "docker build -t torokoko/prestabanco-frontend: ."
+                            sh "docker push torokoko/prestabanco-frontend"
                         }
                     }                    
                 }

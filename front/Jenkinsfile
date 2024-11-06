@@ -15,7 +15,7 @@ pipeline{
                 dir("front"){
                     script{
                          withDockerRegistry(credentialsId: 'docker-credentials'){
-                            sh "docker build -t torokoko/prestabanco-frontend: ."
+                            sh "docker build -t torokoko/prestabanco-frontend ."
                             sh "docker push torokoko/prestabanco-frontend"
                         }
                     }                    

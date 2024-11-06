@@ -53,11 +53,10 @@ export default function SearchRequest() {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <strong>La solicitud se encuentra en el estado {_loan.status.name}</strong>
+            <strong>La solicitud se encuentra en el estado {_loan.status?.name}</strong>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          {/* <Button onClick={handleClose}>Disagree</Button> */}
           <Button onClick={() => setOpen(false)} autoFocus>
             Cerrar
           </Button>

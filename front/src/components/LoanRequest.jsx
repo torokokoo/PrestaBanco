@@ -25,6 +25,8 @@ export default function LoanRequest() {
     const [requestedLoanType, setRequestedLoanType] = useState(1);
     const [requestedTerm, setRequestedTerm] = useState(0);
     const [requestedFunding, setRequestedFunding] = useState(0);
+    const [requestedRating, setRequestedRating] = useState(0);
+    const [avaluo, setAvaluo] = useState(0);
     const [loanTypes, setLoanTypes] = useState([[]]);
     const [requierements, setRequierements] = useState([{}]);
     const navigate = useNavigate();
@@ -71,6 +73,7 @@ export default function LoanRequest() {
                 statusId: 1
             },
             requestedTerm,
+            requestedRate: requestedRating / 100,
             requestedFunding: requestedFunding / 100,
             birthdate: '2024-10-09T23:08:56+0000',
             createdAt: Date.now(),
@@ -187,6 +190,18 @@ export default function LoanRequest() {
                 {loanTypes.length >= 1 && requestedTerm > loanTypes[requestedLoanType - 1].maxTerm ?
                 (<>Has superado el plazo maximo</>) : (<></>)    
             }
+            </FormControl>
+
+            <FormControl fullWidth>
+                <TextField
+                    id="avaluo"
+                    label="Cuanto es el monto que quieres solicitar"
+                    value={avaluo}
+                    type="number"
+                    defaultValue="0"
+                    style={{ marginTop: "1rem" }}
+                    onChange={(e) => setAvaluo(e.target.value)}
+                ></TextField>
                 
             </FormControl>
 
@@ -211,6 +226,32 @@ export default function LoanRequest() {
                 
             </FormControl>
 
+            <FormControl fullWidth>
+                <TextField
+                    id="requestedRating"
+                    label="Elige el interes (en porciento)"
+                    value={requestedRating}
+                    type="number"
+                    defaultValue="0"
+                    style={{ marginTop: "1rem" }}
+                    slotProps={{
+                        input: {
+                            endAdornment: <InputAdornment position="end">%</InputAdornment>
+                        }
+                    }}
+                    onChange={(e) => setRequestedRating(e.target.value)}
+                ></TextField>
+                {loanTypes.length >= 1 && requestedRating > (loanTypes[requestedLoanType - 1].maxRate * 100) ?
+                (<>Has superado el interes maximo permitido</>) : (<></>) }
+
+                {loanTypes.length >= 1 && requestedRating < (loanTypes[requestedLoanType - 1].minRate * 100) ?
+                (<>Estas por debajo del interes minimo permitido</>) : (<></>) }
+                
+            </FormControl>
+
+            {requestedFunding > 0 && requestedTerm > 0 && avaluo > 0 && requestedRating > 0 && 
+            <h2>Estarias pagando una cuota mensual de {((avaluo * requestedFunding / 100) / (requestedTerm * 12) * (1 + requestedRating)).toFixed(2)}CLP, lo que da un total de {((avaluo * requestedFunding / 100) * (1 + requestedRating / 100)).toFixed(2)}CLP </h2>
+            }
             <Divider>CARGA DE ARCHIVOS</Divider>
             <FormControl fullWidth>
             {requierements.map((item, index) => {

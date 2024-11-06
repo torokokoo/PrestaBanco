@@ -46,4 +46,5 @@ public class Loan {
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "status_id")
     @Getter @Setter private Status status;
+
 }

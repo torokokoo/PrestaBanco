@@ -26,7 +26,7 @@ spring:
         - id: loan
           uri: lb://loan
           predicates:
-            - Path=/api/loan/**
+            - Path=/api/loans/**
         - id: ms-products
           uri: lb://loan-type
           predicates:

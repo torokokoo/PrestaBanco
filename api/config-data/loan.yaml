@@ -1,0 +1,15 @@
+server:
+  port: ${SERVER_PORT}
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pb-loan
+    username: postgres
+    password: root
+  eureka:
+    instance:
+      preferIpAddress: true
+    client:
+      ftech-registry: true
+      registry-with-eureka: true
+      service-url:
+        defaultZone: http://localhost:8761/eureka

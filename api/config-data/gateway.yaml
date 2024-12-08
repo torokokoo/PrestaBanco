@@ -39,3 +39,7 @@ spring:
           uri: lb://mainframe
           predicates:
             - Path=/api/mainframe/**
+        - id: document
+          uri: lb://document
+          predicates:
+            - Path=/api/document/**

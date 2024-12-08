@@ -48,18 +48,19 @@ const columns = [
     width: 150,
     editable: false,
   },
+  // TODO: valueFormatter con switch para ir iterando el estado (ENTREGA 3)
   {
     field: 'loanType',
     headerName: 'Tipo de prestamo',
     width: 220,
     editable: true,
-    valueGetter: (params) => params.name
+    // valueGetter: (params) => params.name
   },
   {
     field: 'status',
     headerName: 'Estado',
     width: 220,
-    valueGetter: (params) => params.name
+    // valueGetter: (params) => params.name
   },
   {
     field: 'updatedAt',

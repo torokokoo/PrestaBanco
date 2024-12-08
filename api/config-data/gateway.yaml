@@ -42,4 +42,4 @@ spring:
         - id: document
           uri: lb://document
           predicates:
-            - Path=/api/document/**
+            - Path=/api/documents/**

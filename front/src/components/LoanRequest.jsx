@@ -10,7 +10,7 @@ import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
 import Slider from '@mui/material/Slider';
 import SaveIcon from "@mui/icons-material/Save";
-import loanTypeRequierementsService from "../services/loanTypeRequierements.service";
+import documentService from "../services/document.service";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import loanService from "../services/loan.service";
 
@@ -23,12 +23,14 @@ export default function LoanRequest() {
     const [address, setAddress] = useState("");
     const [balance, setBalance] = useState(0);
     const [requestedLoanType, setRequestedLoanType] = useState(1);
+    const [hasSelectedLoanType, setHasSelectedLoanType] = useState(false);
     const [requestedTerm, setRequestedTerm] = useState(0);
     const [requestedFunding, setRequestedFunding] = useState(0);
     const [requestedRating, setRequestedRating] = useState(0);
     const [avaluo, setAvaluo] = useState(0);
     const [loanTypes, setLoanTypes] = useState([[]]);
     const [requierements, setRequierements] = useState([{}]);
+    const [documents, setDocuments] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,12 +44,23 @@ export default function LoanRequest() {
     }, [])
 
     useEffect(() => {
-        async function getRequierements() {
-            const { data } = await loanTypeRequierementsService.getRequierements(requestedLoanType)
-            setRequierements(data)
-        }
+      const fetchAll = async function() {
+        const { data } = await documentService.getAll()
+        setDocuments(data)
+      }
 
-        getRequierements();
+      fetchAll();
+    }, [])
+
+    const loanTypeRequierements = {
+      1: [documents[0], documents[1], documents[2], documents[7], documents[8]],
+      2: [documents[0], documents[1], documents[2], documents[3], documents[7], documents[8]],
+      3: [documents[0], documents[1], documents[4], documents[5], documents[7], documents[8]],
+      4: [documents[0], documents[1], documents[6], documents[7], documents[9]],
+    }
+
+    useEffect(() => {
+            setRequierements(loanTypeRequierements[requestedLoanType])
     }, [requestedLoanType])
 
     const handleFileUpload = (e) => {
@@ -168,7 +181,12 @@ export default function LoanRequest() {
                 variant="standard"
                 defaultValue="Primera vivienda"
                 style={{ marginTop: "1rem" }}
-                onChange={(e) => setRequestedLoanType(e.target.value)}
+                onChange={
+                  (e) => {
+                    setRequestedLoanType(e.target.value)
+                    setHasSelectedLoanType(true)
+                  }
+                }
                 // style={{ width: "25%" }}
               >
                 {loanTypes.map( (item, index) => {
@@ -254,7 +272,8 @@ export default function LoanRequest() {
             }
             <Divider>CARGA DE ARCHIVOS</Divider>
             <FormControl fullWidth>
-            {requierements.map((item, index) => {
+              {/* Aqui simplemente hay que cambiar requierements.length > 1 por hasSelectedLoanType y se soluciona, entrega 3 */}
+            {requierements.length > 1 && requierements.map((item, index) => {
                 return (
                     <Button
                     component="label"
@@ -264,7 +283,7 @@ export default function LoanRequest() {
                     sx={{ marginRight: "1rem" }}
                     style={{ marginTop: "1rem" }}
                 >
-                    {item.name}
+                    {item?.name}
                     <input type="file" accept=".pdf" hidden onChange={handleFileUpload} />
                 </Button> 
                 )

@@ -21,6 +21,7 @@ spring:
           '[/**]':
             allowedMethods: "*"
             allowedHeaders: "*"
+            allowedOrigins: "*"
       routes:
         - id: loan
           uri: lb://loan/

@@ -24,10 +24,6 @@ spring:
             allowedHeaders: "*"
       routes:
         - id: loan
-          uri: lb://loan
+          uri: lb://loan/
           predicates:
             - Path=/api/loans/**
-        - id: ms-products
-          uri: lb://loan-type
-          predicates:
-            - Path=/api/loan-type/**

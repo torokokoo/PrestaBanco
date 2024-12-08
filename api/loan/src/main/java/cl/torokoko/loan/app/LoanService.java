@@ -22,11 +22,11 @@ public class LoanService {
         return loanRepository.save(loan);
     }
 
-//    public Loan updateStatus(Loan loan, long statusId) {
-//        Loan found = loanRepository.findByLoanId(loan.getLoanId());
-//        found.setStatus(statusId);
-//        return loanRepository.save(found);
-//    }
+    public Loan updateStatus(Loan loan, long statusId) {
+        Loan found = loanRepository.findByLoanId(loan.getLoanId());
+        found.setStatus(statusId);
+        return loanRepository.save(found);
+    }
 
     public Loan getById(long id) {
         return loanRepository.findByLoanId(id);

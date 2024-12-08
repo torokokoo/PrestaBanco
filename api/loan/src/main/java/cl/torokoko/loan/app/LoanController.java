@@ -26,8 +26,8 @@ public class LoanController {
     @PostMapping("/")
     public Loan add(@RequestBody Loan loan) {return loanService.newLoan(loan);}
 
-//    @PutMapping("/status")
-//    public Loan updateStatus(@RequestBody Loan loan, @RequestParam int id) {
-//        return loanService.updateStatus(loan, id);
-//    }
+    @PutMapping("/status")
+    public Loan updateStatus(@RequestBody Loan loan, @RequestParam long id) {
+        return loanService.updateStatus(loan, id);
+    }
 }

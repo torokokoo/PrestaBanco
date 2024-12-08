@@ -27,3 +27,7 @@ spring:
           uri: lb://loan/
           predicates:
             - Path=/api/loans/**
+        - id: status
+          uri: lb://status/
+          predicates:
+            - Path=/api/status/**

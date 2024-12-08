@@ -31,3 +31,11 @@ spring:
           uri: lb://status/
           predicates:
             - Path=/api/status/**
+        - id: loan-type
+          uri: lb://loan-type
+          predicates:
+            - Path=/api/loan-type/**
+        - id: mainframe
+          uri: lb://mainframe
+          predicates:
+            - Path=/api/mainframe/**

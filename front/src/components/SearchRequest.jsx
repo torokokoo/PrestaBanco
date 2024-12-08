@@ -10,19 +10,32 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import loanService from '../services/loan.service';
+import statusService from '../services/status.service';
 
 export default function SearchRequest() {
     const [_search, setSearch] = useState('');
     const [_open, setOpen] = useState(false);
-    const [_loan, setLoan] = useState({})
+    const [_loan, setLoan] = useState({});
+    const [_status, setStatus] = useState('');
     const navigate = useNavigate();
 
     const search = async () => {
         const { data } = await loanService.getById(_search)
         setLoan(data);
         setOpen(true);
-        console.log(_loan)
     }
+
+    useEffect(() => {
+        const fetchStatus = async () => {
+            if (_loan.status) {
+              const { data } = await statusService.getById(_loan.status)
+              setStatus(data);
+            }
+        }
+
+        fetchStatus();
+    }, [_loan])
+
     return (
         <Container>
             <TextField 
@@ -53,7 +66,7 @@ export default function SearchRequest() {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            <strong>La solicitud se encuentra en el estado {_loan.status?.name}</strong>
+            La solicitud se encuentra en el estado <strong>{_status.name}</strong>
           </DialogContentText>
         </DialogContent>
         <DialogActions>

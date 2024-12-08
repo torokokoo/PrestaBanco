@@ -3,4 +3,8 @@ const getAll = async() => {
     return await axios.get('/api/status/')
 }
 
-export default { getAll, }
+const getById = async (id) => {
+    return await axios.get(`/api/status/${id}`)
+}
+
+export default { getAll, getById }

@@ -16,4 +16,6 @@ public class StatusService {
         return statusRepository.findAll();
     }
 
+    public Status getById(long id) { return statusRepository.findByStatusId(id); }
+
 }

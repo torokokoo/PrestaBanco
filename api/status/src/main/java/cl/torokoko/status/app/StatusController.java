@@ -17,4 +17,7 @@ public class StatusController {
 
     @GetMapping("/")
     public List<Status> getAll() { return statusService.getAll(); }
+
+    @GetMapping("/{id}")
+    public Status getLoan(@PathVariable long id) { return statusService.getById(id); }
 }

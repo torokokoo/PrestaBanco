@@ -19,10 +19,10 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowed-methods: "*"
-            allowed-headers: "*"
-            allowed-origins: "*"
-            allow-credentials: true
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowedOrigins: "*"
+            allowCredentials: true
       routes:
         - id: loan
           uri: lb://loan/

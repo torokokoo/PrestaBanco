@@ -92,6 +92,7 @@ export default function DataGridDemo() {
         fetchAll();
     }, [])
 
+
   return (
     <Box sx={{ height: 400, width: '100%' }}>
       <DataGrid

@@ -10,6 +10,7 @@ import Button from '@mui/material/Button';
 import SaveIcon from "@mui/icons-material/Save";
 import { Checkbox, FormControl, TextField, Divider, MenuItem, Container } from '@mui/material';
 import loanService from '../services/loan.service';
+import documentService from '../services/document.service';
 import loanTypeRequierementsService from '../services/loanTypeRequierements.service';
 import { useParams } from 'react-router-dom';
 import statusService from '../services/status.service';
@@ -141,6 +142,7 @@ export default function ReviewLoan() {
     const [loadedLoan, setLoadedLoan] = useState(false);
     const [requierements, setRequierements] = useState([{}]);
     const [calculate, setCalculate] = useState([]);
+    const [documents, setDocuments] = useState([])
     const [status, setStatus] = useState([]);
     const [newStatus, setNewStatus] = useState([]);
     const navigate = useNavigate();
@@ -169,16 +171,32 @@ export default function ReviewLoan() {
 
     useEffect(() => {
         async function getRequierements() {
-            console.log(loadedLoan, loan)
+
+            const loanTypeRequierements = {
+              1: [documents[0], documents[1], documents[2], documents[7], documents[8]],
+              2: [documents[0], documents[1], documents[2], documents[3], documents[7], documents[8]],
+              3: [documents[0], documents[1], documents[4], documents[5], documents[7], documents[8]],
+              4: [documents[0], documents[1], documents[6], documents[7], documents[9]],
+            }
+
             if (loadedLoan) {
-                const { data } = await loanTypeRequierementsService.getRequierements(loan.loanType?.loanTypeId)
-                setRequierements(data)
+                setRequierements(loanTypeRequierements[loan.loanType])
             } 
-            console.log(requierements)
         }
 
         getRequierements();
     }, [loadedLoan])
+
+    useEffect(() => {
+      const fetchAll = async function() {
+        const { data } = await documentService.getAll()
+        setDocuments(data)
+        // documents.map( d => console.log(d) )
+      }
+
+      fetchAll();
+    }, [])
+
 
     const updateLoan = async (e) => {
         e.preventDefault();
@@ -207,7 +225,7 @@ export default function ReviewLoan() {
           </TableRow>
         </TableHead>
         <TableBody>
-          { requierements.map((row, index) => {
+          { requierements.length > 0 && requierements.map((row, index) => {
             if (row.name == 'Comprobante de Ingresos') {
                 return <ComprobanteIngresos key={index} avaluo={_avaluo} requestedFunding={loan.requestedFunding} requestedTerm={loan.requestedTerm}/>
             }

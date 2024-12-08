@@ -34,7 +34,7 @@ spring:
         - id: loan-type
           uri: lb://loan-type
           predicates:
-            - Path=/api/loan-type/**
+            - Path=/api/loan-types/**
         - id: mainframe
           uri: lb://mainframe
           predicates:

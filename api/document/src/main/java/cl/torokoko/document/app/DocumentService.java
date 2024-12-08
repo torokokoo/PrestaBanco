@@ -13,4 +13,6 @@ public class DocumentService {
     public Document getById(long id) {
         return documentRepository.findByDocumentId(id);
     }
+
+    public List<Document> getAll() { return documentRepository.findAll(); }
 }

@@ -45,6 +45,41 @@ function RenderReviewButton(props) {
     )
 }
 
+function EdadSolicitante(props) {
+    const { cuotas } = props;
+    const [edad, setEdad] = useState(0);
+
+    // Hay que pasarlo a backend
+    let valid = (parseInt(edad) + parseInt(cuotas)) <= 70
+
+    return (
+
+    <TableRow
+    key={'Edad del solicitante'}
+    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+    >
+        <TableCell component="th" scope="row">
+        Edad del solicitante
+        </TableCell>
+        <TableCell align="right"><RenderReviewButton/></TableCell>
+        <TableCell align="right">
+            <FormControl>
+            <TextField
+                id="balance"
+                label="Valor"
+                type="number"
+                value={edad}
+                variant="standard"
+                style={{ marginTop: "1rem" }}
+                onChange={(e) => setEdad(e.target.value)}
+            />
+        </FormControl> 
+      </TableCell>
+      <TableCell>{ valid ? '' : 'La edad del solicitante es demasiado para la cantidad de cuotas' }</TableCell>
+      </TableRow>
+    )
+}
+
 function ComprobanteIngresos(props) {
     const { avaluo, requestedFunding, requestedTerm } = props;
     const [_ingresos, setIngresos] = useState(0);
@@ -104,6 +139,86 @@ function HistorialCrediticio() {
         )
 }
 
+function CapacidadAhorro() {
+    const [_saldoMinimo, setSaldoMinimo] = useState(false);
+    const [_historialConsistente, setHistorialConsistente] = useState(false)
+    const [_depositosPeriodicos, setDepositosPeriodicos] = useState(false)
+    const [_relacionSaldoAntiguedad, setRelacionSaldoAntiguedad] = useState(false)
+    const [_retirosRecientes, setRetirosRecientes] = useState(false)
+
+    return (
+
+        <TableRow
+        key={'Escritura de la primera vivienda'}
+        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        >
+            <TableCell component="th" scope="row">
+            Escritura de la primera vivienda
+            </TableCell>
+            <TableCell align="right"><RenderReviewButton/></TableCell>
+            <TableCell align="center">
+            <FormControl>
+                <span>Saldo minimo</span>
+                <Checkbox checked={_saldoMinimo} onChange={(e) => setSaldoMinimo(e.target.checked)}>Saldo minimo</Checkbox>
+                <br />
+                <span>Historial consistente</span>
+                <Checkbox checked={_historialConsistente} onChange={(e) => setHistorialConsistente(e.target.checked)}></Checkbox>
+                <span>Depositos Periodicos</span>
+                <Checkbox checked={_depositosPeriodicos} onChange={(e) => setDepositosPeriodicos(e.target.checked)}></Checkbox>
+                <span>Relacion Saldo/Anos de antiguedad</span>
+                <Checkbox checked={_relacionSaldoAntiguedad} onChange={(e) => setRelacionSaldoAntiguedad(e.target.checked)}></Checkbox>
+                <span>Retiros recientes</span>
+                <Checkbox checked={_retirosRecientes} onChange={(e) => setRetirosRecientes(e.target.checked)}></Checkbox>
+            </FormControl> 
+          </TableCell>
+          </TableRow>
+        )
+}
+
+function EscrituraPrimeraVivienda() {
+    const [_, set] = useState(false);
+
+    return (
+
+        <TableRow
+        key={'Escritura de la primera vivienda'}
+        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        >
+            <TableCell component="th" scope="row">
+            Escritura de la primera vivienda
+            </TableCell>
+            <TableCell align="right"><RenderReviewButton/></TableCell>
+            <TableCell align="right">
+            <FormControl>
+                <Checkbox checked={_} onChange={(e) => set(e.target.checked)}></Checkbox>
+            </FormControl> 
+          </TableCell>
+          </TableRow>
+        )
+}
+
+function RelacionDeudaIngreso() {
+    const [_, set] = useState(false);
+
+    return (
+
+        <TableRow
+        key={'Relacion deuda/ingreso'}
+        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+        >
+            <TableCell component="th" scope="row">
+            Relacion deuda/ingreso
+            </TableCell>
+            <TableCell align="right"><RenderReviewButton/></TableCell>
+            <TableCell align="right">
+            <FormControl>
+                <Checkbox checked={_} onChange={(e) => set(e.target.checked)}></Checkbox>
+            </FormControl> 
+          </TableCell>
+          </TableRow>
+        )
+}
+
 function CertificadoAvaluo(props) {
     const { _avaluo, setAvaluo } = props;
     // const [, setIngresos] = useState(0);
@@ -135,6 +250,37 @@ function CertificadoAvaluo(props) {
     )
 }
 
+function AntiguedadLaboral(props) {
+    const { _antiguedad, setAntiguedad } = props;
+
+    return (
+
+    <TableRow
+    key={'Certificado de antiguedad laboral'}
+    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+    >
+        <TableCell component="th" scope="row">
+          Certificado de antiguedad laboral
+        </TableCell>
+        <TableCell align="right"><RenderReviewButton/></TableCell>
+        <TableCell align="right">
+            <FormControl>
+            <TextField
+                id="antiguedad"
+                label="Antiguedad en anos"
+                type="number"
+                value={_antiguedad}
+                variant="standard"
+                style={{ marginTop: "1rem" }}
+                onChange={(e) => setAntiguedad(e.target.value)}
+            />
+        </FormControl> 
+      </TableCell>
+      <TableCell>{ _antiguedad > 1 ? '': 'No cumple con la antiguedad minima de 1 ano' }</TableCell>
+      </TableRow>
+    )
+}
+
 export default function ReviewLoan() {
 
     const { id } = useParams();
@@ -148,6 +294,7 @@ export default function ReviewLoan() {
     const navigate = useNavigate();
 
     const [_avaluo, setAvaluo] = useState(0);
+    const [_antiguedad, setAntiguedad] = useState(0);
 
 
     useEffect(() => {
@@ -235,8 +382,17 @@ export default function ReviewLoan() {
             if (row.name == 'Historial crediticio') {
                 return <HistorialCrediticio key={index} />
             }
-            return null;
+            if (row.name == "Certificado de antiguedad laboral") {
+                return <AntiguedadLaboral key={index} _antiguedad={_antiguedad} setAntiguedad={setAntiguedad} />
+            }
+            if (row.name == "Escritura de la primera vivienda") {
+                return <EscrituraPrimeraVivienda key={index} _antiguedad={_antiguedad} setAntiguedad={setAntiguedad} />
+            }
+            // return null;
           })}
+          <RelacionDeudaIngreso />
+          <EdadSolicitante cuotas={loan.requestedTerm} />
+          <CapacidadAhorro />
         </TableBody>
       </Table>
     </TableContainer>

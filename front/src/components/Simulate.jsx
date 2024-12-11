@@ -13,6 +13,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import loanTypeRequierementsService from "../services/loanTypeRequierements.service";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import loanService from "../services/loan.service";
+import mainframeService from '../services/mainframe.service';
 
 
 export default function LoanRequest() {
@@ -28,7 +29,7 @@ export default function LoanRequest() {
     const [requestedRating, setRequestedRating] = useState(0);
     const [avaluo, setAvaluo] = useState(0);
     const [loanTypes, setLoanTypes] = useState([[]]);
-    const [requierements, setRequierements] = useState([{}]);
+    const [results, setResults] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,52 +42,16 @@ export default function LoanRequest() {
 
     }, [])
 
-    useEffect(() => {
-        async function getRequierements() {
-            const { data } = await loanTypeRequierementsService.getRequierements(requestedLoanType)
-            setRequierements(data)
+    const fetchSimulation = async (n, p, r) => {
+        let payload = {
+            montoPrestamo: p,
+            tasaInteresMensual: r / 12 / 100, // r = tasa anual en porciento,
+            numeroTotalPagos: n * 12 // n = cantidad de anos
         }
 
-        getRequierements();
-    }, [requestedLoanType])
-
-    const handleFileUpload = (e) => {
-        if (!e.target.files) {
-            return;
-        }
-
+        setResults(await mainframeService.simulate(payload))
+        console.log(results)
     }
-
-    const requestLoan = async (e) => {
-        e.preventDefault();
-
-        const loan = {
-            rut, 
-            email,
-            address,
-            balance,
-            name, 
-            loanType: {
-                loanTypeId: requestedLoanType
-            },
-            status: {
-                statusId: 1
-            },
-            requestedTerm,
-            requestedRate: requestedRating / 100,
-            requestedFunding: requestedFunding / 100,
-            birthdate: '2024-10-09T23:08:56+0000',
-            createdAt: Date.now(),
-            updatedAt: Date.now(),
-
-        }
-
-        const { data } = await loanService.create(loan);
-        alert(`Se ha registrado tu solicitud con el numero de seguimiento ${data.loanId}`)
-        navigate("/")
-    }
-
-    // useEffect(() => console.log(requestedLoanType), [requestedLoanType])
 
 
     return (
@@ -124,7 +89,6 @@ export default function LoanRequest() {
                     label="Elige el plazo en anos"
                     value={requestedTerm}
                     type="number"
-                    defaultValue="0"
                     style={{ marginTop: "1rem" }}
                     onChange={(e) => setRequestedTerm(e.target.value)}
                 ></TextField>
@@ -139,41 +103,19 @@ export default function LoanRequest() {
                     label="Cuanto es el monto que quieres solicitar"
                     value={avaluo}
                     type="number"
-                    defaultValue="0"
                     style={{ marginTop: "1rem" }}
                     onChange={(e) => setAvaluo(e.target.value)}
                 ></TextField>
                 
             </FormControl>
 
-            <FormControl fullWidth>
-                <TextField
-                    id="requestedFunding"
-                    label="Elige el financiamiento (en porciento)"
-                    value={requestedFunding}
-                    type="number"
-                    defaultValue="0"
-                    style={{ marginTop: "1rem" }}
-                    slotProps={{
-                        input: {
-                            endAdornment: <InputAdornment position="end">%</InputAdornment>
-                        }
-                    }}
-                    onChange={(e) => setRequestedFunding(e.target.value)}
-                ></TextField>
-                {loanTypes.length >= 1 && requestedFunding > (loanTypes[requestedLoanType - 1].maxFunding * 100) ?
-                (<>Has superado el financimiento maximo</>) : (<></>)    
-            }
-                
-            </FormControl>
 
             <FormControl fullWidth>
                 <TextField
                     id="requestedRating"
-                    label="Elige el interes (en porciento)"
+                    label="Elige la tasa de interes anual (en porciento)"
                     value={requestedRating}
                     type="number"
-                    defaultValue="0"
                     style={{ marginTop: "1rem" }}
                     slotProps={{
                         input: {
@@ -190,8 +132,19 @@ export default function LoanRequest() {
                 
             </FormControl>
 
-            {requestedFunding > 0 && requestedTerm > 0 && avaluo > 0 && requestedRating > 0 && 
-            <h2>Estarias pagando una cuota mensual de {((avaluo * requestedFunding / 100) / (requestedTerm * 12) * (1 + requestedRating)).toFixed(2)}CLP, lo que da un total de {((avaluo * requestedFunding / 100) * (1 + requestedRating / 100)).toFixed(2)}CLP </h2>
+            <br />
+            <Button
+                variant="contained"
+                color="info"
+                onClick={() => fetchSimulation(requestedTerm, avaluo, requestedRating)}
+                style={{ marginTop: "2rem", marginRight: "50px"}}
+                startIcon={<SaveIcon />}
+            >
+                Calcular
+            </Button>
+
+            {results && 
+                <h2>Estarias pagando una cuota mensual de CLP{results.data}</h2>
             }
             <FormControl>
               <br />

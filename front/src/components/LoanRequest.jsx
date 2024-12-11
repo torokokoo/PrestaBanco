@@ -79,12 +79,8 @@ export default function LoanRequest() {
             address,
             balance,
             name, 
-            loanType: {
-                loanTypeId: requestedLoanType
-            },
-            status: {
-                statusId: 1
-            },
+            loanType: requestedLoanType,
+            status: 1,
             requestedTerm,
             requestedRate: requestedRating / 100,
             requestedFunding: requestedFunding / 100,

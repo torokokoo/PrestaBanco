@@ -5,6 +5,7 @@ import loanTypeService from '@/services/loanType.service';
 import { Divider, InputAdornment } from "@mui/material";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
@@ -12,7 +13,9 @@ import Slider from '@mui/material/Slider';
 import SaveIcon from "@mui/icons-material/Save";
 import documentService from "../services/document.service";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import Alert from "@mui/material/Alert";
 import loanService from "../services/loan.service";
+import { NumericFormat } from 'react-number-format';
 
 
 export default function LoanRequest() {
@@ -32,10 +35,12 @@ export default function LoanRequest() {
     const [requierements, setRequierements] = useState([{}]);
     const [documents, setDocuments] = useState([]);
     const navigate = useNavigate();
+    const [errors, setErrors] = useState('')
+
 
     useEffect(() => {
         async function getAll() {
-            const { data } = await loanTypeService.getAll()
+            const { data } = await loanTypeService.getAll().catch(() => setErrors(errors + 'Ha ocurrido un error consiguiendo los tipos de prestamo a traves de la API\n'))
             setLoanTypes(data)
         }
 
@@ -45,7 +50,8 @@ export default function LoanRequest() {
 
     useEffect(() => {
       const fetchAll = async function() {
-        const { data } = await documentService.getAll()
+        const { data } = await documentService.getAll().catch(() => setErrors(errors + 'Ha ocurrido un error consiguiendo los tipos de documentos a traves de la API\n'))
+        setLoanTypes(data)
         setDocuments(data)
       }
 
@@ -90,10 +96,13 @@ export default function LoanRequest() {
 
         }
 
-        const { data } = await loanService.create(loan);
+        const { data } = await loanService.create(loan).catch(() => alert('Ha ocurrido un error generando la solicitud, intentelo nuevamente'));
         alert(`Se ha registrado tu solicitud con el numero de seguimiento ${data.loanId}`)
         navigate("/")
     }
+
+    console.log(errors)
+    if (errors != '') { alert(errors) }
 
     // useEffect(() => console.log(requestedLoanType), [requestedLoanType])
 
@@ -191,35 +200,43 @@ export default function LoanRequest() {
               </TextField>
             </FormControl>
 
-            <FormControl fullWidth>
-                <TextField
-                    id="requestedTerm"
-                    label="Elige el plazo en anos"
-                    value={requestedTerm}
-                    type="number"
-                    defaultValue="0"
-                    style={{ marginTop: "1rem" }}
-                    onChange={(e) => setRequestedTerm(e.target.value)}
-                ></TextField>
-                {loanTypes.length >= 1 && requestedTerm > loanTypes[requestedLoanType - 1].maxTerm ?
-                (<>Has superado el plazo maximo</>) : (<></>)    
-            }
-            </FormControl>
+            <Box style={{marginTop: '50px', backgroundColor: '#F9F9F9', padding: '10px'}}>
+
+            <h3>Elige el plazo en años</h3>
+              <Slider 
+                value={requestedTerm} 
+                onChange={e => setRequestedTerm(e.target.value)} 
+                defaultValue={0} 
+                max={loanTypes[requestedLoanType - 1].maxTerm} 
+                min={1}
+                aria-label="Default" 
+                valueLabelDisplay="auto"
+                marks={[
+                  {value: 1, label: '1 año'},
+                  {value: loanTypes[requestedLoanType - 1].maxTerm, label: `${loanTypes[requestedLoanType - 1].maxTerm} años`}
+                ]}
+              />
+            </Box>
+
+            <Box style={{marginTop: '50px', backgroundColor: '#F9F9F9', padding: '10px'}}>
 
             <FormControl fullWidth>
-                <TextField
+                <NumericFormat
                     id="avaluo"
                     label="Cuanto es el monto que quieres solicitar"
-                    value={avaluo}
-                    type="number"
+                    value={requestedFunding}
+                    customInput={TextField}
+                    valueIsNumericString
+                    // type="number"
                     defaultValue="0"
-                    style={{ marginTop: "1rem" }}
-                    onChange={(e) => setAvaluo(e.target.value)}
-                ></TextField>
-                
+                    onChange={(e) => setRequestedFunding(e.target.value)}
+                    thousandSeparator
+                ></NumericFormat>
+                <Alert severity="info">{`El monto solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].maxFunding * 100}% del valor de la propiedad`}</Alert>
             </FormControl>
+            </Box>
 
-            <FormControl fullWidth>
+            {/* <FormControl fullWidth>
                 <TextField
                     id="requestedFunding"
                     label="Elige el financiamiento (en porciento)"
@@ -236,10 +253,11 @@ export default function LoanRequest() {
                 ></TextField>
                 {loanTypes.length >= 1 && requestedFunding > (loanTypes[requestedLoanType - 1].maxFunding * 100) ?
                 (<>Has superado el financimiento maximo</>) : (<></>)    
-            }
+            } */}
                 
-            </FormControl>
+            {/* </FormControl> */}
 
+            <Box style={{marginTop: '50px', backgroundColor: '#F9F9F9', padding: '10px'}}>
             <FormControl fullWidth>
                 <TextField
                     id="requestedRating"
@@ -248,20 +266,28 @@ export default function LoanRequest() {
                     type="number"
                     defaultValue="0"
                     style={{ marginTop: "1rem" }}
-                    slotProps={{
-                        input: {
-                            endAdornment: <InputAdornment position="end">%</InputAdornment>
-                        }
-                    }}
+                    // slotProps={{
+                    //     input: {
+                    //         endAdornment: <InputAdornment position="end">%</InputAdornment>
+                    //     }
+                    // }}
+                    suffix="%"
                     onChange={(e) => setRequestedRating(e.target.value)}
                 ></TextField>
-                {loanTypes.length >= 1 && requestedRating > (loanTypes[requestedLoanType - 1].maxRate * 100) ?
-                (<>Has superado el interes maximo permitido</>) : (<></>) }
+                {loanTypes.length >= 1 && requestedRating < (loanTypes[requestedLoanType - 1].maxRate * 100) ?
+                (
+                  <Alert severity="Danger">{`El porcentaje solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].minRate * 100}%`}</Alert>
+                ) : (<></>) }
 
                 {loanTypes.length >= 1 && requestedRating < (loanTypes[requestedLoanType - 1].minRate * 100) ?
-                (<>Estas por debajo del interes minimo permitido</>) : (<></>) }
+                (
+                  <Alert severity="Danger">{`El porcentaje solicitado no puede ser inferior al ${loanTypes[requestedLoanType - 1].minRate * 100}%`}</Alert>
+                ) : (<></>) }
+
+                <Alert severity="info">{`El monto solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].maxFunding * 100}% del valor de la propiedad`}</Alert>
                 
             </FormControl>
+            </Box>
 
             {requestedFunding > 0 && requestedTerm > 0 && avaluo > 0 && requestedRating > 0 && 
             <h2>Estarias pagando una cuota mensual de {((avaluo * requestedFunding / 100) / (requestedTerm * 12) * (1 + requestedRating)).toFixed(2)}CLP, lo que da un total de {((avaluo * requestedFunding / 100) * (1 + requestedRating / 100)).toFixed(2)}CLP </h2>

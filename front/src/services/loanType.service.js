@@ -4,4 +4,8 @@ const getAll = async () => {
     return await axios.get('/api/loan-types/')
 }
 
-export default { getAll, }
+const getById = async (id) => {
+    return await axios.get(`/api/loan-types/${id}`)
+}
+
+export default { getAll, getById }

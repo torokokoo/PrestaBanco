@@ -16,6 +16,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import Alert from "@mui/material/Alert";
 import loanService from "../services/loan.service";
 import { NumericFormat } from 'react-number-format';
+import validator from 'validator';
 
 
 export default function LoanRequest() {
@@ -35,7 +36,7 @@ export default function LoanRequest() {
     const [requierements, setRequierements] = useState([{}]);
     const [documents, setDocuments] = useState([]);
     const navigate = useNavigate();
-    const [errors, setErrors] = useState('')
+    const [errors, setErrors] = useState([])
 
 
     useEffect(() => {
@@ -74,6 +75,42 @@ export default function LoanRequest() {
         }
 
     }
+
+    const validateEmail = (email) => {
+      setEmail(email)
+      const e = 'Debes ingresar un correo valido'
+      if (!validator.isEmail(email)) {
+        setErrors(errors.filter(i => i !== e).concat([e]))
+      } else {
+        setErrors(errors.filter(i => i !== e))
+      }
+    }
+
+    const validateRut = (rutCompleto) => {
+        const e = 'Debes ingresar un rut valido'
+        setRut(rutCompleto)
+    
+        const dv = (T) => {
+          var M=0,S=1;
+          for(;T;T=Math.floor(T/10))
+            S=(S+T%10*(9-M++%6))%11;
+          return S?S-1:'k';
+        }
+
+        if (!/^[0-9]+[-|‐]{1}[0-9kK]{1}$/.test( rutCompleto ))
+          return false;
+        var tmp 	= rutCompleto.split('-');
+        var digv	= tmp[1]; 
+        var rut 	= tmp[0];
+        if ( digv == 'K' ) digv = 'k' ;
+        if (dv(rut) == digv) {
+          setErrors(errors.filter(i => i !== e))
+        } else {
+          setErrors(errors.filter(i => i !== e).concat([e]))
+        }
+    }
+
+
 
     const requestLoan = async (e) => {
         e.preventDefault();
@@ -133,9 +170,9 @@ export default function LoanRequest() {
                 label="Rut"
                 value={rut}
                 variant="standard"
-                onChange={(e) => setRut(e.target.value)}
+                onChange={(e) => validateRut(e.target.value)}
                 style={{ marginTop: "1rem" }}
-                helperText="Ej. 12.587.698-8"
+                helperText="Ej. 12587698-8"
               />
             </FormControl>
     
@@ -157,7 +194,7 @@ export default function LoanRequest() {
                 value={email}
                 style={{ marginTop: "1rem" }}
                 variant="standard"
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => validateEmail(e.target.value)}
               />
             </FormControl>
 
@@ -326,9 +363,11 @@ export default function LoanRequest() {
                 onClick={(e) => requestLoan(e)}
                 style={{ marginTop: "1rem" }}
                 startIcon={<SaveIcon />}
+                disabled={errors.length >= 1}
               >
                 Solicitar
               </Button>
+              {errors.length >= 1 && (<Alert severity="error">{errors.map(e => (<li key={e}>{e}</li>))}</Alert>)}
             </FormControl>
           </form>
           <hr />

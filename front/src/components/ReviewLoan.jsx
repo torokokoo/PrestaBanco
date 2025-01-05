@@ -352,10 +352,14 @@ export default function ReviewLoan() {
             loanId: loan.loanId
         }
 
-        await loanService.updateStatus(payload, newStatus);
-        alert('Solicitud actualizada')
-        navigate('/');
+        if (confirm('Estas seguro de que quieres actualizar el estado?')) {
+          await loanService.updateStatus(payload, newStatus);
+          alert('Solicitud actualizada')
+          navigate('/');
+        }
+
     }
+
 
 
   return (

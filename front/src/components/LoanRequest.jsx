@@ -51,7 +51,6 @@ export default function LoanRequest() {
     useEffect(() => {
       const fetchAll = async function() {
         const { data } = await documentService.getAll().catch(() => setErrors(errors + 'Ha ocurrido un error consiguiendo los tipos de documentos a traves de la API\n'))
-        setLoanTypes(data)
         setDocuments(data)
       }
 
@@ -93,16 +92,26 @@ export default function LoanRequest() {
             birthdate: '2024-10-09T23:08:56+0000',
             createdAt: Date.now(),
             updatedAt: Date.now(),
-
         }
 
-        const { data } = await loanService.create(loan).catch(() => alert('Ha ocurrido un error generando la solicitud, intentelo nuevamente'));
-        alert(`Se ha registrado tu solicitud con el numero de seguimiento ${data.loanId}`)
-        navigate("/")
-    }
+        const confirmText = `
+        Quieres pedir un prestamo con los siguientes datos:
+        RUT: ${loan.rut}
+        EMAIL: ${loan.email}
+        DIRECCION: ${loan.address}
+        NOMBRE: ${loan.name}
+        TIPO DE PRESTAMO: ${loanTypes[loan.loanType - 1].name}
+        PERIODO: ${loan.requestedTerm} anos
+        INTERESES: ${loan.requestedRate * 100}%
+        `
 
-    console.log(errors)
-    if (errors != '') { alert(errors) }
+        if (confirm(confirmText) == true) {
+          const { data } = await loanService.create(loan).catch((e) => alert('Ha ocurrido un error generando la solicitud, intentelo nuevamente\n' + e));
+          alert(`Se ha registrado tu solicitud con el numero de seguimiento ${data.loanId}`)
+          navigate("/")
+        }
+
+    }
 
     // useEffect(() => console.log(requestedLoanType), [requestedLoanType])
 
@@ -116,7 +125,7 @@ export default function LoanRequest() {
           component="form"
           style={{"margin": "50px"}}
         >
-          <Divider>DATOS PERSONALES</Divider>
+          <Divider>SOLICITAR PRESTAMO</Divider>
           <form>
             <FormControl fullWidth>
               <TextField
@@ -223,20 +232,19 @@ export default function LoanRequest() {
             <FormControl fullWidth>
                 <NumericFormat
                     id="avaluo"
-                    label="Cuanto es el monto que quieres solicitar"
-                    value={requestedFunding}
+                    label="Cuanto es el avaluo de la propiedad"
+                    value={avaluo}
                     customInput={TextField}
                     valueIsNumericString
                     // type="number"
                     defaultValue="0"
-                    onChange={(e) => setRequestedFunding(e.target.value)}
+                    onChange={(e) => setAvaluo(e.target.value)}
                     thousandSeparator
                 ></NumericFormat>
-                <Alert severity="info">{`El monto solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].maxFunding * 100}% del valor de la propiedad`}</Alert>
+                
             </FormControl>
-            </Box>
 
-            {/* <FormControl fullWidth>
+            <FormControl fullWidth>
                 <TextField
                     id="requestedFunding"
                     label="Elige el financiamiento (en porciento)"
@@ -252,10 +260,11 @@ export default function LoanRequest() {
                     onChange={(e) => setRequestedFunding(e.target.value)}
                 ></TextField>
                 {loanTypes.length >= 1 && requestedFunding > (loanTypes[requestedLoanType - 1].maxFunding * 100) ?
-                (<>Has superado el financimiento maximo</>) : (<></>)    
-            } */}
+                (<Alert severity="error">{`El monto solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].maxFunding * 100}% del valor de la propiedad`}</Alert>) : (<></>)    
+            }
                 
-            {/* </FormControl> */}
+            </FormControl>
+            </Box>
 
             <Box style={{marginTop: '50px', backgroundColor: '#F9F9F9', padding: '10px'}}>
             <FormControl fullWidth>
@@ -264,7 +273,6 @@ export default function LoanRequest() {
                     label="Elige el interes (en porciento)"
                     value={requestedRating}
                     type="number"
-                    defaultValue="0"
                     style={{ marginTop: "1rem" }}
                     // slotProps={{
                     //     input: {
@@ -274,17 +282,15 @@ export default function LoanRequest() {
                     suffix="%"
                     onChange={(e) => setRequestedRating(e.target.value)}
                 ></TextField>
-                {loanTypes.length >= 1 && requestedRating < (loanTypes[requestedLoanType - 1].maxRate * 100) ?
+                {loanTypes.length >= 1 && requestedRating >= (loanTypes[requestedLoanType - 1].maxRate * 100) ?
                 (
-                  <Alert severity="Danger">{`El porcentaje solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].minRate * 100}%`}</Alert>
+                  <Alert severity="error">{`El porcentaje solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].maxRate * 100}%`}</Alert>
                 ) : (<></>) }
 
-                {loanTypes.length >= 1 && requestedRating < (loanTypes[requestedLoanType - 1].minRate * 100) ?
+                {loanTypes.length >= 1 && requestedRating <= (loanTypes[requestedLoanType - 1].minRate * 100) ?
                 (
-                  <Alert severity="Danger">{`El porcentaje solicitado no puede ser inferior al ${loanTypes[requestedLoanType - 1].minRate * 100}%`}</Alert>
+                  <Alert severity="error">{`El porcentaje solicitado no puede ser inferior al ${loanTypes[requestedLoanType - 1].minRate * 100}%`}</Alert>
                 ) : (<></>) }
-
-                <Alert severity="info">{`El monto solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].maxFunding * 100}% del valor de la propiedad`}</Alert>
                 
             </FormControl>
             </Box>

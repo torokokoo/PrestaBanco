@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import loanService from '../services/loan.service';
 import statusService from '../services/status.service';
 import loanTypeService from '../services/loanType.service';
@@ -32,7 +32,7 @@ function RenderButton(props) {
           }
         }}
       >
-        Open
+        REVISAR
       </Button>
     )
 }
@@ -139,7 +139,13 @@ export default function DataGridDemo() {
           }}
           pageSizeOptions={[10]}
           checkboxSelection
+          slots={{ toolbar: GridToolbar }}
           disableRowSelectionOnClick
+          slotProps={{
+            toolbar: {
+              showQuickFilter: true,
+            },
+          }}
         />
         )
       }

@@ -179,7 +179,7 @@ export default function LoanRequest() {
             <FormControl fullWidth>
               <TextField
                 id="name"
-                label="Name"
+                label="Nombre"
                 value={name}
                 style={{ marginTop: "1rem" }}
                 variant="standard"

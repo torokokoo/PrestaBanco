@@ -319,12 +319,12 @@ export default function LoanRequest() {
                     suffix="%"
                     onChange={(e) => setRequestedRating(e.target.value)}
                 ></TextField>
-                {loanTypes.length >= 1 && requestedRating >= (loanTypes[requestedLoanType - 1].maxRate * 100) ?
+                {loanTypes.length >= 1 && requestedRating > (loanTypes[requestedLoanType - 1].maxRate * 100) ?
                 (
                   <Alert severity="error">{`El porcentaje solicitado no puede ser superior al ${loanTypes[requestedLoanType - 1].maxRate * 100}%`}</Alert>
                 ) : (<></>) }
 
-                {loanTypes.length >= 1 && requestedRating <= (loanTypes[requestedLoanType - 1].minRate * 100) ?
+                {loanTypes.length >= 1 && requestedRating < (loanTypes[requestedLoanType - 1].minRate * 100) ?
                 (
                   <Alert severity="error">{`El porcentaje solicitado no puede ser inferior al ${loanTypes[requestedLoanType - 1].minRate * 100}%`}</Alert>
                 ) : (<></>) }
